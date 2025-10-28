@@ -1,6 +1,6 @@
 const budgetProcedures = require('../db/budgets');
 const { authenticateToken } = require('../middleware/auth');
-const { cacheMiddleware, invalidateUserCache } = require('../middleware/cache');
+const { cacheMiddleware, invalidateUserCache } = require('../middleware/cache-redis');
 
 // Budget routes
 async function budgetRoutes(fastify, options) {

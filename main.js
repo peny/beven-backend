@@ -1,5 +1,6 @@
 require('dotenv').config();
 const config = require('./config');
+const { initializeRedis } = require('./middleware/cache-redis');
 
 const fastify = require('fastify')({
   logger: {
@@ -51,6 +52,14 @@ fastify.get('/', async (request, reply) => {
 // Start the server
 const start = async () => {
   try {
+    // Initialize Redis cache
+    const redisInitialized = await initializeRedis();
+    if (redisInitialized) {
+      fastify.log.info('Redis cache initialized successfully');
+    } else {
+      fastify.log.info('Using in-memory cache fallback');
+    }
+
     // Initialize default admin user if no users exist
     const userProcedures = require('./db/users');
     const defaultAdmin = await userProcedures.createDefaultAdmin();
