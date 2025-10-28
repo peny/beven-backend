@@ -19,6 +19,13 @@
 - [ ] **Bill Splitting**: Groups, bills, settlements
 - [ ] **Advanced Features**: Analytics, notifications, data export
 
+## ❌ Abandoned Approaches
+- **Cookie-based Auth**: Initially tried but switched to JWT Bearer tokens for mobile compatibility
+- **SQLite for Production**: Tested but insufficient for concurrent users
+- **Express.js**: Considered but chose Fastify for better performance
+- **Manual DB Migrations**: Abandoned in favor of Prisma's automatic schema management
+- **Redis Caching**: Considered but chose node-cache for simplicity and user-specific isolation
+
 ## API Endpoints
 ```
 GET  /health                    # Health check
