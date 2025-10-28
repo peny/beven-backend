@@ -302,6 +302,37 @@ All API responses follow this format:
    - Check test environment variables
    - Verify test data setup
 
+## PROGRESS.md Maintenance
+
+### Keeping Track of Abandoned Approaches
+
+The `PROGRESS.md` file should be updated regularly to document approaches that have been tried and abandoned. This prevents repeating failed attempts and helps maintain project context.
+
+#### What to Document:
+- **Failed Implementations**: Approaches that didn't work and why
+- **Abandoned Features**: Features that were planned but later removed
+- **Technical Decisions**: Why certain technologies or patterns were rejected
+- **Performance Issues**: Problems encountered and solutions attempted
+- **Deployment Challenges**: Issues faced during deployment and how they were resolved
+
+#### Format for Abandoned Items:
+```markdown
+## ❌ Abandoned Approaches
+- **Cookie-based Auth**: Initially tried but switched to JWT Bearer tokens for mobile compatibility
+- **SQLite for Production**: Tested but insufficient for concurrent users
+- **Express.js**: Considered but chose Fastify for better performance
+- **Manual DB Migrations**: Abandoned in favor of Prisma's automatic schema management
+```
+
+#### When to Update:
+- After major architectural decisions
+- When switching technologies or approaches
+- After resolving deployment issues
+- When abandoning planned features
+- During code reviews that identify better patterns
+
+This practice ensures that future development doesn't repeat past mistakes and maintains institutional knowledge about why certain decisions were made.
+
 ## Support
 
 For issues and questions:
