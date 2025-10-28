@@ -4,7 +4,7 @@
   "description": "Backend for Beven budgeting app built with Fastify and Prisma",
   "main": "main.js",
   "scripts": {
-    "start": "prisma generate && prisma db push && node main.js",
+    "start": "prisma generate && prisma db push --accept-data-loss && node main.js",
     "dev": "prisma generate && nodemon main.js",
     "build": "prisma generate",
     "db:generate": "prisma generate",
