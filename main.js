@@ -22,8 +22,21 @@ fastify.register(require('./routes/auth'), { prefix: '/api' });
 fastify.register(require('./routes/budgets'), { prefix: '/api' });
 fastify.register(require('./routes/categories'), { prefix: '/api' });
 fastify.register(require('./routes/transactions'), { prefix: '/api' });
-fastify.register(require('./routes/splits'), { prefix: '/api' });
-fastify.register(require('./routes/connections'), { prefix: '/api' });
+
+// Register new routes with error handling
+try {
+  fastify.register(require('./routes/splits'), { prefix: '/api' });
+  fastify.log.info('Splits routes registered successfully');
+} catch (error) {
+  fastify.log.error('Failed to register splits routes:', error);
+}
+
+try {
+  fastify.register(require('./routes/connections'), { prefix: '/api' });
+  fastify.log.info('Connections routes registered successfully');
+} catch (error) {
+  fastify.log.error('Failed to register connections routes:', error);
+}
 
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {
@@ -49,7 +62,17 @@ fastify.get('/', async (request, reply) => {
       splits: '/api/splits',
       connections: '/api/connections',
       health: '/health'
-    }
+    },
+    deployment: 'enhanced-v2'
+  };
+});
+
+// Test endpoint to verify deployment
+fastify.get('/test', async (request, reply) => {
+  return {
+    message: 'Deployment test successful',
+    timestamp: new Date().toISOString(),
+    version: 'enhanced-v2'
   };
 });
 
