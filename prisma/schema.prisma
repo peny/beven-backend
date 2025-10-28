@@ -25,6 +25,7 @@ model User {
   splits       Split[]
   connections  Connection[] @relation("UserConnections")
   connectionsFrom Connection[] @relation("ConnectedTo")
+  splitParticipants SplitParticipant[]
 
   @@map("users")
 }
