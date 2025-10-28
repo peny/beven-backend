@@ -396,6 +396,8 @@ The `PROGRESS.md` file should be updated regularly to document approaches that h
 - **SQLite for Production**: Tested but insufficient for concurrent users
 - **Express.js**: Considered but chose Fastify for better performance
 - **Manual DB Migrations**: Abandoned in favor of Prisma's automatic schema management
+- **Node-cache Only**: Initially used but switched to Redis with fallback for production scalability
+- **Complex Route Registration**: Simplified approach due to deployment issues
 ```
 
 #### When to Update:
@@ -406,6 +408,27 @@ The `PROGRESS.md` file should be updated regularly to document approaches that h
 - During code reviews that identify better patterns
 
 This practice ensures that future development doesn't repeat past mistakes and maintains institutional knowledge about why certain decisions were made.
+
+## Deployment Issues & Solutions
+
+### Render.com Free Tier Limitations
+- **Slow Deployments**: Can take 15-30 minutes on free tier
+- **Stuck Deployments**: Services may not update despite multiple pushes
+- **Resource Constraints**: Limited build resources cause delays
+- **Instance Switching**: Slow transition between old/new instances
+
+### Troubleshooting Steps:
+1. **Check deployment status** in Render dashboard
+2. **Monitor logs** for build/deployment errors
+3. **Force restart** with small code changes
+4. **Simplify configuration** if complex routes cause issues
+5. **Consider upgrading** to paid tier for faster deployments
+
+### Alternative Solutions:
+- **Vercel**: Faster deployments, good for Node.js
+- **Railway**: Modern platform with better free tier
+- **Heroku**: Reliable but more expensive
+- **Self-hosted**: VPS with Docker for full control
 
 ## Support
 

@@ -1,9 +1,9 @@
 # Beven Budget Backend - Progress
 
-## Status: ✅ Phase 1 Complete - Live Deployment
+## Status: 🔄 Phase 2 In Progress - Deployment Issue
 
 **URL**: https://beven-budget-backend-frankfurt.onrender.com  
-**Tech**: Fastify + PostgreSQL + Prisma + JWT  
+**Tech**: Fastify + PostgreSQL + Prisma + JWT + Redis  
 **Architecture**: Routes ↔ DB separation (stored procedures pattern)
 
 ## ✅ Completed (Phase 1)
@@ -15,18 +15,33 @@
 - [x] **Testing**: Jest setup with basic tests
 - [x] **Deployment**: Live on Render.com (Frankfurt)
 
-## 🔄 Planned (Phase 2)
-- [ ] **Bill Splitting**: Groups, bills, settlements
-- [ ] **Advanced Features**: Analytics, notifications, data export
+## ✅ Completed (Phase 2 - Code Ready)
+- [x] **Bill Splitting**: Split creation, participants, payment tracking
+- [x] **User Connections**: Friends system with email-based connections
+- [x] **Enhanced Backend**: Rate limiting, validation, security headers
+- [x] **Redis Caching**: Production-ready with fallback
+- [x] **Frontend Integration Guide**: Complete API documentation
+
+## 🔄 Current Issue
+- [ ] **Deployment Stuck**: Render service not updating despite multiple pushes
+- [ ] **Route Registration**: New endpoints not accessible (404 errors)
+- [ ] **Frontend Integration**: Waiting for backend endpoints to be live
+
+## 🔄 Planned (Phase 3)
+- [ ] **Analytics**: Spending patterns, budget insights
+- [ ] **Advanced Features**: Notifications, data export/import
 
 ## ❌ Abandoned Approaches
 - **Cookie-based Auth**: Initially tried but switched to JWT Bearer tokens for mobile compatibility
 - **SQLite for Production**: Tested but insufficient for concurrent users
 - **Express.js**: Considered but chose Fastify for better performance
 - **Manual DB Migrations**: Abandoned in favor of Prisma's automatic schema management
-- **Redis Caching**: Considered but chose node-cache for simplicity and user-specific isolation
+- **Node-cache Only**: Initially used but switched to Redis with fallback for production scalability
+- **Complex Route Registration**: Simplified approach due to deployment issues
 
 ## API Endpoints
+
+### ✅ Live (Phase 1)
 ```
 GET  /health                    # Health check
 GET  /                          # API info
@@ -37,6 +52,18 @@ GET  /api/budgets              # List budgets
 POST /api/budgets              # Create budget
 GET  /api/budgets/:id/summary  # Budget summary
 # + categories, transactions CRUD
+```
+
+### 🔄 Ready but Not Deployed (Phase 2)
+```
+GET  /api/splits               # List user's splits
+POST /api/splits               # Create split
+GET  /api/splits/:id           # Get specific split
+PATCH /api/splits/:id/participants/:pid/paid  # Mark paid
+DELETE /api/splits/:id         # Delete split
+GET  /api/connections          # List user's connections
+POST /api/connections          # Add connection
+# + enhanced features (rate limiting, validation, security)
 ```
 
 ---
