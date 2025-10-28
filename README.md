@@ -293,3 +293,4 @@ MIT License - feel free to use this as a starting point for your own budgeting a
 ---
 
 **Built with ❤️ using modern web technologies**
+# Force restart
