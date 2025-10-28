@@ -1,11 +1,12 @@
 const budgetProcedures = require('../db/budgets');
 const { authenticateToken } = require('../middleware/auth');
+const { cacheMiddleware, invalidateUserCache } = require('../middleware/cache');
 
 // Budget routes
 async function budgetRoutes(fastify, options) {
   // GET /budgets - Get all budgets for user
   fastify.get('/budgets', {
-    preHandler: [authenticateToken]
+    preHandler: [authenticateToken, cacheMiddleware({ endpoint: 'budgets', ttl: 300 })]
   }, async (request, reply) => {
     try {
       const budgets = await budgetProcedures.getAll(request.user.id);
@@ -19,7 +20,7 @@ async function budgetRoutes(fastify, options) {
 
   // GET /budgets/:id - Get specific budget
   fastify.get('/budgets/:id', {
-    preHandler: [authenticateToken]
+    preHandler: [authenticateToken, cacheMiddleware({ endpoint: 'budget', ttl: 300 })]
   }, async (request, reply) => {
     try {
       const { id } = request.params;
@@ -60,6 +61,9 @@ async function budgetRoutes(fastify, options) {
         endDate
       });
       
+      // Invalidate user's budget cache
+      invalidateUserCache(request.user.id, 'budgets');
+      
       reply.code(201);
       return { success: true, data: budget, message: 'Budget created successfully' };
     } catch (error) {
@@ -91,6 +95,10 @@ async function budgetRoutes(fastify, options) {
         endDate
       });
       
+      // Invalidate user's budget cache
+      invalidateUserCache(request.user.id, 'budgets');
+      invalidateUserCache(request.user.id, 'budget');
+      
       return { success: true, data: budget, message: 'Budget updated successfully' };
     } catch (error) {
       fastify.log.error(error);
@@ -113,6 +121,10 @@ async function budgetRoutes(fastify, options) {
       const { id } = request.params;
       await budgetProcedures.delete(id, request.user.id);
       
+      // Invalidate user's budget cache
+      invalidateUserCache(request.user.id, 'budgets');
+      invalidateUserCache(request.user.id, 'budget');
+      
       return { success: true, message: 'Budget deleted successfully' };
     } catch (error) {
       fastify.log.error(error);
@@ -129,7 +141,7 @@ async function budgetRoutes(fastify, options) {
 
   // GET /budgets/:id/summary - Get budget summary
   fastify.get('/budgets/:id/summary', {
-    preHandler: [authenticateToken]
+    preHandler: [authenticateToken, cacheMiddleware({ endpoint: 'budget-summary', ttl: 180 })]
   }, async (request, reply) => {
     try {
       const { id } = request.params;

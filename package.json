@@ -19,21 +19,27 @@
     "test:coverage": "jest --coverage"
   },
   "dependencies": {
-    "fastify": "^4.24.3",
     "@fastify/cors": "^8.4.0",
     "@fastify/jwt": "^7.2.4",
     "@prisma/client": "^5.7.1",
+    "bcryptjs": "^2.4.3",
     "dotenv": "^16.3.1",
-    "prisma": "^5.7.1",
-    "bcryptjs": "^2.4.3"
+    "fastify": "^4.24.3",
+    "node-cache": "^5.1.2",
+    "prisma": "^5.7.1"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2",
+    "@types/jest": "^29.5.8",
     "jest": "^29.7.0",
-    "supertest": "^6.3.3",
-    "@types/jest": "^29.5.8"
+    "nodemon": "^3.0.2",
+    "supertest": "^6.3.3"
   },
-  "keywords": ["budgeting", "fastify", "prisma", "api"],
+  "keywords": [
+    "budgeting",
+    "fastify",
+    "prisma",
+    "api"
+  ],
   "author": "",
   "license": "MIT",
   "engines": {
@@ -41,7 +47,9 @@
   },
   "jest": {
     "testEnvironment": "node",
-    "testMatch": ["**/tests/**/*.test.js"],
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ],
     "collectCoverageFrom": [
       "**/*.js",
       "!node_modules/**",
