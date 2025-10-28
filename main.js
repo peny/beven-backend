@@ -22,6 +22,8 @@ fastify.register(require('./routes/auth'), { prefix: '/api' });
 fastify.register(require('./routes/budgets'), { prefix: '/api' });
 fastify.register(require('./routes/categories'), { prefix: '/api' });
 fastify.register(require('./routes/transactions'), { prefix: '/api' });
+fastify.register(require('./routes/splits'), { prefix: '/api' });
+fastify.register(require('./routes/connections'), { prefix: '/api' });
 
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {
@@ -44,6 +46,8 @@ fastify.get('/', async (request, reply) => {
       budgets: '/api/budgets',
       categories: '/api/categories',
       transactions: '/api/transactions',
+      splits: '/api/splits',
+      connections: '/api/connections',
       health: '/health'
     }
   };

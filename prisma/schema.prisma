@@ -22,6 +22,9 @@ model User {
 
   budgets      Budget[]
   transactions Transaction[]
+  splits       Split[]
+  connections  Connection[] @relation("UserConnections")
+  connectionsFrom Connection[] @relation("ConnectedTo")
 
   @@map("users")
 }
@@ -74,6 +77,57 @@ model Transaction {
   budget   Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
   category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  splits   Split[]
 
   @@map("transactions")
+}
+
+model Split {
+  id            Int      @id @default(autoincrement())
+  title         String
+  totalAmount   Decimal
+  createdBy     Int
+  transactionId Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  creator     User         @relation(fields: [createdBy], references: [id], onDelete: Cascade)
+  transaction Transaction? @relation(fields: [transactionId], references: [id], onDelete: SetNull)
+  participants SplitParticipant[]
+
+  @@map("splits")
+}
+
+model SplitParticipant {
+  id             Int     @id @default(autoincrement())
+  splitId        Int
+  name           String
+  email          String?
+  amount         Decimal
+  isPaid         Boolean @default(false)
+  isConnectedUser Boolean @default(false)
+  userId         Int?    // Reference to User if it's a connected user
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  split Split @relation(fields: [splitId], references: [id], onDelete: Cascade)
+  user  User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("split_participants")
+}
+
+model Connection {
+  id       Int     @id @default(autoincrement())
+  userId   Int     // User who created the connection
+  name     String
+  email    String
+  username String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation("UserConnections", fields: [userId], references: [id], onDelete: Cascade)
+  connectedTo User? @relation("ConnectedTo", fields: [email], references: [email])
+
+  @@unique([userId, email])
+  @@map("connections")
 }
