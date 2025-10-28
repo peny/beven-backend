@@ -4,6 +4,29 @@
 
 This document outlines the development plan for the backend of a budgeting application, built using Fastify. The architecture emphasizes a strict separation between route handling and database logic, with the database layer functioning akin to stored procedures. The application will be deployed on Render.com.
 
+## Quick Reference
+
+- **Live URL**: https://beven-budget-backend-frankfurt.onrender.com
+- **Tech Stack**: Fastify + PostgreSQL + Prisma + JWT
+- **Architecture**: Routes ↔ DB separation (stored procedures pattern)
+- **Status**: Phase 1 Complete, Phase 2 Planned
+- **Repository**: https://github.com/peny/beven-backend
+
+## Current Status
+
+### ✅ Phase 1 Complete (October 2025)
+- **Authentication**: JWT Bearer tokens implemented
+- **Core Features**: Budgets, categories, transactions CRUD
+- **Database**: PostgreSQL with Prisma ORM
+- **Testing**: Jest test suite with basic coverage
+- **Deployment**: Live on Render.com (Frankfurt region)
+- **Documentation**: Complete API documentation
+
+### 🔄 Next Steps
+- **Phase 2**: Bill splitting system design
+- **Phase 3**: Analytics and advanced features
+- **Monitoring**: Performance optimization and error tracking
+
 ## Architecture Principles
 
 ### Separation of Concerns
@@ -104,6 +127,21 @@ The database layer encapsulates all data operations, providing a clean interface
 4. **Prisma Cascade**: Delete budget → cascade to categories and transactions
 5. **Error Handling**: Proper HTTP status codes and Prisma error translation
 6. **Validation**: Basic validation in routes before DB calls
+
+## Recent Decisions & Context
+
+### ✅ Implemented Solutions
+- **Fastify over Express**: Better performance and TypeScript support
+- **PostgreSQL over SQLite**: Production-ready concurrent access
+- **JWT Bearer over Cookies**: Mobile app compatibility
+- **Prisma over Raw SQL**: Type safety and migration management
+- **Render.com Deployment**: Easy PostgreSQL integration
+
+### 🔧 Current Configuration
+- **Database**: PostgreSQL on Render (Frankfurt region)
+- **Authentication**: JWT with 7-day expiration
+- **CORS**: Enabled for all origins (development)
+- **Logging**: Fastify built-in logger with pretty print in dev
 
 ## Database Schema
 
@@ -238,6 +276,42 @@ All API responses follow this format:
 - `404` - Not Found (resource doesn't exist)
 - `409` - Conflict (duplicate resource)
 - `500` - Internal Server Error
+
+## Common Tasks & Commands
+
+### Development
+```bash
+# Start development server
+npm run dev
+
+# Run tests
+npm test
+
+# Database operations
+npm run db:generate    # Generate Prisma client
+npm run db:push        # Push schema to database
+npm run db:studio      # Open Prisma Studio
+```
+
+### Deployment
+```bash
+# Production build
+npm run build
+
+# Deploy to Render (automatic on push to main)
+git push origin main
+```
+
+### Testing API
+```bash
+# Health check
+curl https://beven-budget-backend-frankfurt.onrender.com/health
+
+# Register user
+curl -X POST https://beven-budget-backend-frankfurt.onrender.com/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"email":"test@example.com","password":"password123","name":"Test User"}'
+```
 
 ## Development Workflow
 
