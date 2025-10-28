@@ -23,20 +23,9 @@ fastify.register(require('./routes/budgets'), { prefix: '/api' });
 fastify.register(require('./routes/categories'), { prefix: '/api' });
 fastify.register(require('./routes/transactions'), { prefix: '/api' });
 
-// Register new routes with error handling
-try {
-  fastify.register(require('./routes/splits'), { prefix: '/api' });
-  fastify.log.info('Splits routes registered successfully');
-} catch (error) {
-  fastify.log.error('Failed to register splits routes:', error);
-}
-
-try {
-  fastify.register(require('./routes/connections'), { prefix: '/api' });
-  fastify.log.info('Connections routes registered successfully');
-} catch (error) {
-  fastify.log.error('Failed to register connections routes:', error);
-}
+// New routes temporarily disabled for deployment testing
+// fastify.register(require('./routes/splits'), { prefix: '/api' });
+// fastify.register(require('./routes/connections'), { prefix: '/api' });
 
 // Health check endpoint
 fastify.get('/health', async (request, reply) => {
