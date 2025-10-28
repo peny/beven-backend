@@ -1,0 +1,79 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  role      String   @default("user") // admin, user
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  budgets      Budget[]
+  transactions Transaction[]
+
+  @@map("users")
+}
+
+model Budget {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  name      String
+  amount    Decimal
+  period    String   // monthly, weekly, yearly
+  startDate DateTime
+  endDate   DateTime?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user        User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories  Category[]
+  transactions Transaction[]
+
+  @@map("budgets")
+}
+
+model Category {
+  id              Int     @id @default(autoincrement())
+  budgetId        Int
+  name            String
+  allocatedAmount Decimal
+  spentAmount     Decimal @default(0)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  budget       Budget       @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+
+  @@map("categories")
+}
+
+model Transaction {
+  id          Int      @id @default(autoincrement())
+  budgetId    Int
+  categoryId  Int
+  userId      Int
+  amount      Decimal
+  description String?
+  date        DateTime @default(now())
+  type        String   @default("expense") // expense, income
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  budget   Budget   @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("transactions")
+}

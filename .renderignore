@@ -1,0 +1,35 @@
+# Render ignore file
+# Exclude unnecessary files from deployment
+
+# Development files
+.env
+.env.local
+.env.development.local
+.env.test.local
+
+# Test files
+tests/
+*.test.js
+jest.config.js
+
+# Documentation
+*.md
+!README.md
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+
+# Coverage
+coverage/
+.nyc_output
