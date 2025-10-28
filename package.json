@@ -16,7 +16,8 @@
     "deploy:build": "prisma generate && prisma migrate deploy",
     "test": "jest",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage"
+    "test:coverage": "jest --coverage",
+    "restart": "echo 'Forcing deployment restart' && exit 1"
   },
   "dependencies": {
     "@fastify/cors": "^8.4.0",

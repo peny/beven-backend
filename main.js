@@ -76,6 +76,15 @@ fastify.get('/test', async (request, reply) => {
   };
 });
 
+// Simple test route for splits
+fastify.get('/api/splits-test', async (request, reply) => {
+  return {
+    success: true,
+    message: 'Splits endpoint is working',
+    timestamp: new Date().toISOString()
+  };
+});
+
 // Start the server
 const start = async () => {
   try {
