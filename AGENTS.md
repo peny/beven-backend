@@ -481,3 +481,33 @@ All GitHub operations use `gh` CLI:
 - Add comments: `gh pr comment`
 - Merge PRs: `gh pr merge`
 - Check auth: `gh auth status`
+
+### PR Hygiene (avoid broken titles/bodies)
+
+- Always pass a short, single-line `--title`.
+- For multiline bodies, use a heredoc with `--body-file -` to avoid shell-escaping/newline issues:
+
+```bash
+gh pr create \
+  --title "feat: concise single-line title" \
+  --body-file - << 'EOF'
+Summary line
+
+### Changes
+- Bullet 1
+- Bullet 2
+
+### Verification
+```bash
+curl http://localhost:3000/health
+```
+EOF
+```
+
+- To fix an existing PR:
+
+```bash
+gh pr edit <number> --title "new concise title" --body-file - << 'EOF'
+New clean body
+EOF
+```
