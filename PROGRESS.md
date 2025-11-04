@@ -84,3 +84,56 @@ JWT_SECRET=dev-secret-change-me PORT=3000 HOST=0.0.0.0 NODE_ENV=development npm 
 ```bash
 curl http://localhost:3000/health
 ```
+
+## Docker Setup Notes (Nov 2025)
+
+### What failed initially
+- Installed Intel (x86_64) Docker Desktop via Homebrew at `/usr/local` (Rosetta), which caused engine start errors and helper timeouts.
+- vmnetd helper: "timeout while waiting for vmnetd to start".
+- Reinstall attempts blocked by leftover binaries: `docker-credential-osxkeychain`, `docker-credential-desktop`, `kubectl.docker`, `hyperkit`, `docker`.
+- CLI showed 500 on socket: `request returned 500 ... /docker.sock/v1.51/version` (engine not running).
+
+### Fixes that worked
+- Removed stale binaries in `/usr/local/bin` and quit all Docker processes.
+- Installed Apple Silicon Docker Desktop (arm64) instead of Intel build.
+- Ensured PATH and config writeable (created `~/.zshrc`, added Docker CLI path).
+- Approved and started networking helper:
+  - `sudo /Applications/Docker.app/Contents/MacOS/com.docker.vmnetd install`
+  - `sudo launchctl kickstart -k system/com.docker.vmnetd`
+- Verified `docker version` shows `darwin/arm64`.
+
+### Local Postgres via Docker (working)
+```
+docker run --name beven-pg --platform=linux/arm64/v8 \
+  -e POSTGRES_PASSWORD=postgres -e POSTGRES_USER=postgres -e POSTGRES_DB=beven_dev \
+  -p 5432:5432 -d postgres:14
+
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/beven_dev" npm run db:push
+```
+
+### Backend verification
+```
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/beven_dev" \
+JWT_SECRET=dev-secret-change-me NODE_ENV=development npm run dev
+```
+
+Login (default admin auto-seeded):
+```
+curl -s -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@beven.com","password":"admin123"}' | jq
+```
+
+## New Tests Added
+
+- `tests/transactions.test.js`: End-to-end flow using Fastify `inject()`
+  - Registers a user and authenticates
+  - Creates a budget and category
+  - Creates a transaction with description "Dune 2"
+  - Verifies retrieval and that category `spentAmount` updates
+  - Lists transactions for the budget
+
+Run single test file:
+```
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/beven_dev" npm test -- tests/transactions.test.js
+```
