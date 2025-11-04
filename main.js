@@ -2,11 +2,17 @@ require('dotenv').config();
 const config = require('./config');
 const { initializeRedis } = require('./middleware/cache-redis');
 
+const isDev = config.server.environment === 'development';
 const fastify = require('fastify')({
-  logger: {
-    level: 'info',
-    prettyPrint: config.server.environment === 'development'
-  }
+  logger: isDev
+    ? {
+        level: 'info',
+        transport: {
+          target: 'pino-pretty',
+          options: { colorize: true, translateTime: 'SYS:standard' }
+        }
+      }
+    : { level: 'info' }
 });
 
 // Register CORS
@@ -85,15 +91,19 @@ const start = async () => {
       fastify.log.info('Using in-memory cache fallback');
     }
 
-    // Initialize default admin user if no users exist
-    const userProcedures = require('./db/users');
-    const defaultAdmin = await userProcedures.createDefaultAdmin();
-    
-    if (defaultAdmin) {
-      fastify.log.info('Default admin user created:');
-      fastify.log.info(`Email: ${defaultAdmin.email}`);
-      fastify.log.info('Password: admin123');
-      fastify.log.info('Please change the password after first login!');
+    // Initialize default admin user if no users exist (non-fatal if DB unavailable)
+    try {
+      const userProcedures = require('./db/users');
+      const defaultAdmin = await userProcedures.createDefaultAdmin();
+      if (defaultAdmin) {
+        fastify.log.info('Default admin user created:');
+        fastify.log.info(`Email: ${defaultAdmin.email}`);
+        fastify.log.info('Password: admin123');
+        fastify.log.info('Please change the password after first login!');
+      }
+    } catch (dbInitError) {
+      fastify.log.warn('Skipping default admin initialization (database not available).');
+      fastify.log.debug(dbInitError);
     }
 
     const port = config.server.port;
