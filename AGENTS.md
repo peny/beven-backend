@@ -438,3 +438,41 @@ For issues and questions:
 - Test with provided test suite
 - Create GitHub issues for bugs
 - Submit feature requests via GitHub
+
+## GitHub Access
+
+### **ONLY** Use GitHub CLI
+
+**CRITICAL**: GitHub CLI (`gh`) is the **ONLY** way to access GitHub. Never use browser automation or API tokens directly.
+
+### Authentication Check
+
+Always verify authentication before GitHub operations:
+
+```bash
+gh auth status
+```
+
+### If Not Authenticated
+
+If authentication fails, guide the user through one-time code authentication:
+
+1. Run: `gh auth login -h github.com`
+2. Select: **"GitHub.com"**
+3. Choose: **"Login with a web browser"**
+4. User will receive a one-time code
+5. User visits: https://github.com/login/device
+6. User enters the code
+7. Verify: `gh auth status` should show authenticated
+
+**IMPORTANT**: Always use one-time code authentication. Never use token-based auth.
+
+### GitHub Operations
+
+All GitHub operations use `gh` CLI:
+
+- Create/update PRs: `gh pr create`, `gh pr edit`
+- View PRs: `gh pr list`, `gh pr view`
+- Add comments: `gh pr comment`
+- Merge PRs: `gh pr merge`
+- Check auth: `gh auth status`
