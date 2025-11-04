@@ -1,5 +1,10 @@
 # AGENTS.md
 
+<p align="center">
+  <img src="assets/logo.png" alt="Beven Logo" width="160" />
+  
+</p>
+
 ## Project Overview
 
 This document outlines the development plan for the backend of a budgeting application, built using Fastify. The architecture emphasizes a strict separation between route handling and database logic, with the database layer functioning akin to stored procedures. The application will be deployed on Render.com.

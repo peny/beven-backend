@@ -1,5 +1,10 @@
 # Beven Budget Backend
 
+<p align="center">
+  <img src="assets/logo.png" alt="Beven Logo" width="240" />
+  
+</p>
+
 A modern, full-stack budgeting application backend built with Fastify, Prisma, and PostgreSQL. Features authentication, budget management, category tracking, and transaction handling with a clean, separated architecture.
 
 ## ✨ Features

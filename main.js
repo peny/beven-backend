@@ -1,5 +1,6 @@
 require('dotenv').config();
 const config = require('./config');
+const path = require('path');
 const { initializeRedis } = require('./middleware/cache-redis');
 
 const isDev = config.server.environment === 'development';
@@ -17,6 +18,16 @@ const fastify = require('fastify')({
 
 // Register CORS
 fastify.register(require('@fastify/cors'), config.cors);
+
+// Serve static files from /public (e.g., /public/logo.png)
+try {
+  fastify.register(require('@fastify/static'), {
+    root: path.join(__dirname, 'public'),
+    prefix: '/public/'
+  });
+} catch (e) {
+  // Static plugin is optional; ignore if not installed in some environments
+}
 
 // Register JWT
 fastify.register(require('@fastify/jwt'), {
