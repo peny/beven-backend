@@ -1,5 +1,10 @@
 # Backend Integration Guide for Frontend Team
 
+<p align="center">
+  <img src="assets/logo.png" alt="Beven Logo" width="160" />
+  
+</p>
+
 ## 🚀 **API Base URL**
 ```
 https://beven-budget-backend-frankfurt.onrender.com
