@@ -68,3 +68,19 @@ POST /api/connections          # Add connection
 
 ---
 **Last Updated**: Oct 28, 2025
+
+## Local Start Notes (JWT)
+
+- Set `JWT_SECRET` before starting locally. Either:
+  - Create `.env` (from `.env.example`) and set `JWT_SECRET`.
+  - Or run inline:
+
+```bash
+JWT_SECRET=dev-secret-change-me PORT=3000 HOST=0.0.0.0 NODE_ENV=development npm run dev
+```
+
+- Verify:
+
+```bash
+curl http://localhost:3000/health
+```

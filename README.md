@@ -105,6 +105,11 @@ beven-backend/
    npm run dev
    ```
 
+   If you don't want to create a `.env` yet, you can start with inline env vars:
+   ```bash
+   JWT_SECRET=dev-secret-change-me PORT=3000 HOST=0.0.0.0 NODE_ENV=development npm run dev
+   ```
+
 The server will start on `http://localhost:3000`
 
 ### Default Admin Account
