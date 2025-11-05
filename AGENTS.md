@@ -446,6 +446,12 @@ This practice ensures that future development doesn't repeat past mistakes and m
 - **Heroku**: Reliable but more expensive
 - **Self-hosted**: VPS with Docker for full control
 
+## Destructive Operations Policy
+
+- Never remove or recreate containers, databases, or volumes without explicit user approval.
+- Before any action like `docker rm -f`, warn the user twice using this exact phrasing each time: "You have said not to do this" and wait for confirmation.
+- Prefer non-destructive options first (inspect logs, restart service, environment fixes). Document rationale in `PROGRESS.md` if destructive action is approved.
+
 ## Support
 
 For issues and questions:
@@ -492,6 +498,22 @@ All GitHub operations use `gh` CLI:
 - Add comments: `gh pr comment`
 - Merge PRs: `gh pr merge`
 - Check auth: `gh auth status`
+
+### PR and Merge Automation (preferred)
+
+- One-time setup per machine (CLI persists):
+  - Check: `gh auth status`
+  - If not authenticated: `gh auth login -h github.com` → choose "GitHub.com" → "Login with a web browser" and approve device code. Re-check with `gh auth status`.
+- Create PR to main (done by the agent, not you):
+  - `gh pr create --base main --title "chore: updates" --body-file - << 'EOF'` … `EOF`
+- Merge PR:
+  - `gh pr merge --merge`
+- Direct merge (when requested):
+  - `git checkout main && git pull origin main && git merge --no-ff <branch> -m "merge: <branch> -> main" && git push origin main`
+
+Notes:
+- Cursor editor OAuth is not exposed to the GitHub CLI. The CLI uses its own persisted auth; once logged in via web flow, it survives new chats and restarts.
+- The assistant will perform PR creation and merging automatically when authenticated, avoiding asking you to do it manually. We'll only prompt if authentication is missing.
 
 ### PR Hygiene (avoid broken titles/bodies)
 

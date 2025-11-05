@@ -203,3 +203,9 @@ Frontend POST requests to `/api/budgets/:id/categories` were being blocked by CO
 - Always set `DATABASE_URL` in `.env` file, not just shell environment
 - CORS requires explicit configuration matching frontend expectations
 - Server restarts can lose environment variables if not in `.env`
+
+## Destructive Operations Policy
+
+- Never remove or recreate containers, databases, or volumes without explicit user approval.
+- Before any action like `docker rm -f`, warn the user twice using this exact phrasing each time: "You have said not to do this" and wait for confirmation.
+- Prefer non-destructive options first (inspect logs, restart service, environment fixes). Document rationale here if destructive action is approved.
