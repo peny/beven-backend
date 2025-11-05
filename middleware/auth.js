@@ -7,8 +7,7 @@ async function authenticateToken(request, reply) {
     const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
     
     if (!token) {
-      reply.code(401);
-      return { success: false, error: 'Access token required' };
+      return reply.code(401).send({ success: false, error: 'Access token required' });
     }
 
     const decoded = request.server.jwt.verify(token);
@@ -16,14 +15,13 @@ async function authenticateToken(request, reply) {
     const user = await userProcedures.getById(decoded.userId);
     
     if (!user || !user.isActive) {
-      reply.code(401);
-      return { success: false, error: 'Invalid or inactive user' };
+      return reply.code(401).send({ success: false, error: 'Invalid or inactive user' });
     }
 
     request.user = user;
   } catch (error) {
-    reply.code(401);
-    return { success: false, error: 'Invalid token' };
+    request.log.debug('Auth error:', error.message);
+    return reply.code(401).send({ success: false, error: 'Invalid token' });
   }
 }
 
@@ -34,13 +32,11 @@ async function requireAdmin(request, reply) {
     await authenticateToken(request, reply);
     
     // Check if user is admin
-    if (request.user.role !== 'admin') {
-      reply.code(403);
-      return { success: false, error: 'Admin access required' };
+    if (!request.user || request.user.role !== 'admin') {
+      return reply.code(403).send({ success: false, error: 'Admin access required' });
     }
   } catch (error) {
-    reply.code(403);
-    return { success: false, error: 'Admin access required' };
+    return reply.code(403).send({ success: false, error: 'Admin access required' });
   }
 }
 

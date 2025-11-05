@@ -137,3 +137,69 @@ Run single test file:
 ```
 DATABASE_URL="postgresql://postgres:postgres@localhost:5432/beven_dev" npm test -- tests/transactions.test.js
 ```
+
+## Frontend-Backend Integration Debugging (Nov 2025)
+
+### Issue Found
+Frontend requests to `/api/budgets` and `/api/transactions` were returning **500 Internal Server Error** instead of expected **401 Unauthorized**. Error was: `Cannot read properties of null (reading 'id')` in route handlers trying to access `request.user.id`.
+
+### Root Cause
+The `authenticateToken` middleware in `middleware/auth.js` was returning error objects on auth failure but **not stopping execution**. Fastify continued to the route handler, which tried to access `request.user.id` when `request.user` was `null`, causing 500 errors.
+
+### Backend Fixes Applied
+1. **Fixed auth middleware** (`middleware/auth.js`):
+   - Changed error returns from `return { success: false, ... }` to `return reply.code(401).send({ success: false, ... })`
+   - This properly halts execution when auth fails, preventing routes from running with `null` user
+   - Applied fix to `authenticateToken` and `requireAdmin` middleware
+
+2. **Added request logging** (`main.js`):
+   - Added `onRequest` hook to log: URL, method, `hasAuth`, `authType`, origin
+   - Helps debug missing Authorization headers and CORS issues
+   - Logs show clear auth status for each request
+
+### What We Discovered
+- Backend now correctly returns **401 Unauthorized** when tokens are missing/invalid (instead of 500)
+- Frontend requests show `hasAuth: false` and `authType: "none"` in logs
+- Frontend needs to:
+  1. Extract token from login response: `response.data.token`
+  2. Store token (localStorage/sessionStorage)
+  3. Include in all requests: `Authorization: Bearer <token>`
+
+### Testing
+- Verified login endpoint works: `POST /api/auth/login` with `admin@beven.com` / `admin123`
+- Confirmed token is returned in `data.token` field
+- Backend correctly rejects requests without tokens (401 instead of 500)
+- Logs now show detailed request information for debugging
+
+### Files Changed
+- `middleware/auth.js`: Fixed error handling to halt execution on auth failure
+- `main.js`: Added request logging hook for debugging
+
+## CORS and Database Connectivity Issues (Nov 2025)
+
+### Issue
+Frontend POST requests to `/api/budgets/:id/categories` were being blocked by CORS preflight. Login also failed with 500 errors after server restart.
+
+### Root Causes
+1. **CORS Configuration**: Server had `origin: true` (allow all) but frontend needed explicit origins and headers. Browser blocked POST requests after OPTIONS preflight.
+2. **Database Connectivity**: After server restart, `DATABASE_URL` wasn't set in environment, causing Prisma connection errors (P1010: access denied).
+
+### Fixes Applied
+1. **CORS Update** (`config.js`):
+   - Changed to explicit origins: `['http://localhost:19007', 'http://localhost:8082']`
+   - Added PATCH method, ensured Authorization header allowed
+   - Set `preflightContinue: false` for auto-handling OPTIONS
+   - Changed `allowedHeaders` to `['*']` for development flexibility
+
+2. **Categories Validation** (`routes/categories.js`):
+   - Fixed validation to allow `allocatedAmount: 0` (was rejecting falsy values)
+
+3. **Database Setup**:
+   - Started local Postgres via Docker for development
+   - Set `DATABASE_URL` in environment before server restart
+   - Ran `prisma db push` to sync schema
+
+### Lessons Learned
+- Always set `DATABASE_URL` in `.env` file, not just shell environment
+- CORS requires explicit configuration matching frontend expectations
+- Server restarts can lose environment variables if not in `.env`

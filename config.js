@@ -20,9 +20,11 @@ module.exports = {
 
   // CORS configuration
   cors: {
-    origin: true, // Allow all origins for development
+    origin: ['http://localhost:19007', 'http://localhost:8082'],
     credentials: false, // No cookies, using Bearer tokens
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    // Allow any headers during development to avoid blocking browser-added headers
+    allowedHeaders: ['*'],
+    preflightContinue: false
   }
 };

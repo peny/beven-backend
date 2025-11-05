@@ -19,6 +19,20 @@ const fastify = require('fastify')({
 // Register CORS
 fastify.register(require('@fastify/cors'), config.cors);
 
+// Add request logging hook for debugging
+fastify.addHook('onRequest', async (request, reply) => {
+  const authHeader = request.headers.authorization;
+  const hasAuth = !!authHeader;
+  const authType = authHeader ? authHeader.split(' ')[0] : 'none';
+  request.log.info({
+    url: request.url,
+    method: request.method,
+    hasAuth,
+    authType,
+    origin: request.headers.origin || 'none'
+  }, 'Incoming request');
+});
+
 // Serve static files from /public (e.g., /public/logo.png)
 try {
   fastify.register(require('@fastify/static'), {

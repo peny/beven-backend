@@ -46,9 +46,9 @@ async function categoryRoutes(fastify, options) {
     try {
       const { id } = request.params;
       const { name, allocatedAmount } = request.body;
-      
-      // Basic validation
-      if (!name || !allocatedAmount) {
+
+      // Basic validation (allow 0 as a valid allocatedAmount)
+      if (!name || allocatedAmount === undefined) {
         reply.code(400);
         return { success: false, error: 'Name and allocatedAmount are required' };
       }

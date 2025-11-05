@@ -143,10 +143,15 @@ The database layer encapsulates all data operations, providing a clean interface
 - **Render.com Deployment**: Easy PostgreSQL integration
 
 ### 🔧 Current Configuration
-- **Database**: PostgreSQL on Render (Frankfurt region)
+- **Database**: PostgreSQL on Render (Frankfurt region) or local Docker for dev
 - **Authentication**: JWT with 7-day expiration
-- **CORS**: Enabled for all origins (development)
+- **CORS**: Explicit origins (`http://localhost:19007`, `http://localhost:8082`) with wildcard headers for dev
 - **Logging**: Fastify built-in logger with pretty print in dev
+
+### Recent Fixes (Nov 2025)
+- **CORS**: Updated to explicit dev origins and allow all headers during development
+- **Categories**: Fixed validation to allow `allocatedAmount: 0`
+- **Database**: Ensure `DATABASE_URL` is set in `.env` file (not just shell) before server restart
 
 ## Database Schema
 
@@ -365,18 +370,24 @@ curl -X POST https://beven-budget-backend-frankfurt.onrender.com/api/auth/regist
    - Verify `DATABASE_URL` format
    - Check database credentials
    - Ensure database is running
+   - **Important**: Set `DATABASE_URL` in `.env` file, not just shell environment (survives server restarts)
 
-2. **Authentication Issues**
+2. **CORS Issues**
+   - Check `config.js` has explicit origins matching frontend
+   - Verify `allowedHeaders` includes required headers (or `['*']` for dev)
+   - Ensure OPTIONS preflight returns 204 without authentication
+
+3. **Authentication Issues**
    - Verify JWT token format
    - Check token expiration
    - Ensure user is active
 
-3. **Prisma Errors**
+4. **Prisma Errors**
    - Run `npm run db:generate` after schema changes
    - Run `npm run db:push` to sync schema
    - Check for migration conflicts
 
-4. **Test Failures**
+5. **Test Failures**
    - Ensure test database is clean
    - Check test environment variables
    - Verify test data setup

@@ -199,7 +199,7 @@ function cacheMiddleware(options = {}) {
     });
     
     if (cachedData) {
-      request.log.info(`Cache hit for user ${userId} on ${endpoint}`);
+      request.log.info(`Cache hit for user ${userId} (${request.user?.email || 'unknown'}) on ${endpoint}`);
       return reply.send(cachedData);
     }
 
@@ -210,7 +210,7 @@ function cacheMiddleware(options = {}) {
     reply.send = async function(data) {
       // Only cache successful responses
       if (reply.statusCode >= 200 && reply.statusCode < 300) {
-        request.log.info(`Caching response for user ${userId} on ${endpoint}`);
+        request.log.info(`Caching response for user ${userId} (${request.user?.email || 'unknown'}) on ${endpoint}`);
         await setCachedData(userId, endpoint, data, {
           ...request.query,
           ...request.params
