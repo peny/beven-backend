@@ -174,3 +174,32 @@ The `authenticateToken` middleware in `middleware/auth.js` was returning error o
 ### Files Changed
 - `middleware/auth.js`: Fixed error handling to halt execution on auth failure
 - `main.js`: Added request logging hook for debugging
+
+## CORS and Database Connectivity Issues (Nov 2025)
+
+### Issue
+Frontend POST requests to `/api/budgets/:id/categories` were being blocked by CORS preflight. Login also failed with 500 errors after server restart.
+
+### Root Causes
+1. **CORS Configuration**: Server had `origin: true` (allow all) but frontend needed explicit origins and headers. Browser blocked POST requests after OPTIONS preflight.
+2. **Database Connectivity**: After server restart, `DATABASE_URL` wasn't set in environment, causing Prisma connection errors (P1010: access denied).
+
+### Fixes Applied
+1. **CORS Update** (`config.js`):
+   - Changed to explicit origins: `['http://localhost:19007', 'http://localhost:8082']`
+   - Added PATCH method, ensured Authorization header allowed
+   - Set `preflightContinue: false` for auto-handling OPTIONS
+   - Changed `allowedHeaders` to `['*']` for development flexibility
+
+2. **Categories Validation** (`routes/categories.js`):
+   - Fixed validation to allow `allocatedAmount: 0` (was rejecting falsy values)
+
+3. **Database Setup**:
+   - Started local Postgres via Docker for development
+   - Set `DATABASE_URL` in environment before server restart
+   - Ran `prisma db push` to sync schema
+
+### Lessons Learned
+- Always set `DATABASE_URL` in `.env` file, not just shell environment
+- CORS requires explicit configuration matching frontend expectations
+- Server restarts can lose environment variables if not in `.env`
