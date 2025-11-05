@@ -124,6 +124,21 @@ After first startup, you can log in with:
 - **Password**: `admin123`
 
 **⚠️ Important**: Change the default password after first login!
+### Demo Data (Local Development)
+
+Populate the database with a richer demo dataset (users, budgets, categories, transactions):
+
+```bash
+# Ensure local Postgres is running and DATABASE_URL is set
+DATABASE_URL="postgresql://postgres:postgres@localhost:5432/beven_dev?schema=public" \
+npm run db:seed:demo
+```
+
+Seeded demo includes:
+- Users: `admin@beven.com` / `admin123`, `test@example.com` / `password123`
+- Budgets: "Personal", "Shared Household"
+- Categories: Movies, Groceries, Video Games, Rent, Utilities
+- Example transactions (e.g., "Dune 2")
 
 ## 🧪 Testing
 
@@ -223,6 +238,7 @@ The application includes four main entities:
 - `npm run db:push` - Push schema changes to database
 - `npm run db:migrate` - Create and apply migrations
 - `npm run db:studio` - Open Prisma Studio
+- `npm run db:seed:demo` - Seed database with demo data
 - `npm test` - Run tests
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:coverage` - Run tests with coverage
@@ -261,10 +277,10 @@ This application is configured for easy deployment to Render. See [AGENTS.md](./
 
 ### Database
 
-- **Development**: SQLite (local file)
+- **Development**: PostgreSQL (local Docker recommended)
 - **Production**: PostgreSQL (Render managed)
 
-The Prisma schema automatically adapts to the database provider based on the `DATABASE_URL` environment variable.
+Set `DATABASE_URL` in `.env` (or inline) before starting. Prisma uses the configured `DATABASE_URL`.
 
 ## 🎯 Roadmap
 

@@ -11,6 +11,7 @@
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
     "db:studio": "prisma studio",
+    "db:seed:demo": "node scripts/seed_with_demo_data.js",
     "postinstall": "prisma generate",
     "dev:setup": "prisma generate && prisma db push",
     "deploy:build": "prisma generate && prisma migrate deploy",
