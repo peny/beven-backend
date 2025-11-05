@@ -19,12 +19,33 @@ module.exports = {
   },
 
   // CORS configuration
-  cors: {
-    origin: ['http://localhost:19007', 'http://localhost:8082'],
-    credentials: false, // No cookies, using Bearer tokens
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    // Allow any headers during development to avoid blocking browser-added headers
-    allowedHeaders: ['*'],
-    preflightContinue: false
+  // Allow localhost origins in development and the deployed frontend in production by default.
+  // You can override allowed origins via CORS_ORIGINs env var (comma-separated).
+  get cors() {
+    const isProd = (process.env.NODE_ENV === 'production');
+    const defaultDev = ['http://localhost:19007', 'http://localhost:8082', 'http://localhost:3000', 'http://127.0.0.1:5173', 'http://localhost:5173'];
+    const defaultProd = ['https://beven-frontend.onrender.com'];
+    const envList = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+    const allowList = (envList.length > 0) ? envList : (isProd ? defaultProd : defaulting(defaultDev));
+
+    // Fastify-cors accepts a function for dynamic origin. Allow no-origin (e.g., curl),
+    // and allow only whitelisted origins otherwise.
+    const originFn = (origin, cb) => {
+      if (!origin) return cb(null, true);
+      if (allowList.includes(origin)) return cb(null, true);
+      // Not allowed origin
+      return cb(new Error('CORS: origin not allowed'), false);
+    };
+
+    return {
+      origin: originFn,
+      credentials: false, // Using Bearer tokens; no cookies in this project
+      methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+      // Allow any request header; browsers will still require preflight for non-simple headers
+      allowedHeaders: ['*'],
+      preflightContinue: false
+    };
   }
 };
+
+function defaulting(arr) { return Array.isArray(arr) ? arr : []; }
